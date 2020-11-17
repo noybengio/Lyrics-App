@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Tabs, Tab, AppBar } from "@material-ui/core";
+import { Tabs, Tab, AppBar,Typography  } from "@material-ui/core";
 import Lyrics from './Lyrics'
 import FavoritesList from './FavoritesList'
 import axios from 'axios';
@@ -20,7 +20,7 @@ export class Home extends Component {
             selectedTab: props.selectedTab ? props.selectedTab : 0,
             lyrics: '',
             songToDisplay: '',
-            user:props.user
+            user: props.user
         }
     }
 
@@ -29,7 +29,7 @@ export class Home extends Component {
     };
 
     onDeleteFavorite(index) {
-        var newFavorites =  this.props.user.favorites;
+        var newFavorites = this.props.user.favorites;
         newFavorites.splice(index, 1);
         var updatdUser = {
             username: this.props.user.username,
@@ -49,7 +49,7 @@ export class Home extends Component {
 
     onFavoriteClicked(index) {
         const song = this.props.user.favorites[index];
-        this.setState({songToDisplay:song});
+        this.setState({ songToDisplay: song });
         const options = {
             apiKey: 'DCCS9ls4wWU8rAylkXUtzBlRrCoA1dIlFF5yINiSp210dT7u-UoZmaOuQYPD-ZPt',
             title: song.songTitle,
@@ -64,8 +64,8 @@ export class Home extends Component {
     }
 
     onSearchClicked(songTitle, artist) {
-        const songToDisplay = {songTitle:songTitle,artist:artist};
-        this.setState({songToDisplay:songToDisplay});
+        const songToDisplay = { songTitle: songTitle, artist: artist };
+        this.setState({ songToDisplay: songToDisplay });
         const options = {
             apiKey: 'DCCS9ls4wWU8rAylkXUtzBlRrCoA1dIlFF5yINiSp210dT7u-UoZmaOuQYPD-ZPt',
             title: songTitle,
@@ -74,6 +74,10 @@ export class Home extends Component {
         };
 
         getLyrics(options).then((lyrics) => {
+            //console.log("lyrics: ",lyrics);
+            if (!lyrics) {
+                window.alert("Lyrics Not Found");
+            }
             this.setState({ lyrics: lyrics })
         });
     }
@@ -91,18 +95,19 @@ export class Home extends Component {
             favorites: newFavorites,
             id: this.props.user._id
         }
-       // add to favorites in db
+        // add to favorites in db
         axios.post('http://localhost:4000/update', updatdUser)
             .then(res => {
-                console.log("lyrics update req: ", res.data)
+                console.log("lyrics update req: ", res.data);
             });
+        window.alert("Song Added To Favorites");
     }
 
     render() {
         return (
             <>
                 <AppBar position="static">
-                    <Tabs value={this.state.selectedTab} onChange={this.handleChange}>
+                    <Tabs value={this.state.selectedTab} onChange={this.handleChange} selectionFollowsFocus >
                         <Tab label="Lyrics" />
                         <Tab label="Favorites" />
                     </Tabs>

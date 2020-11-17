@@ -1,114 +1,143 @@
-import React, { Component } from 'react'
-import StarIcon from '@material-ui/icons/Star';
+import React, { useEffect, useState } from 'react'
+import FavoriteIcon from '@material-ui/icons/Favorite';
 import FontSizeChanger from 'react-font-size-changer';
+import { TextField, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
-export default class Lyrics extends Component {
-    constructor(props) {
-        super(props);
+const useStyles = makeStyles({
+    buttonStyle: {
+        background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+        border: 0,
+        borderRadius: 3,
+        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+        color: 'white',
+        height: 48,
+        padding: '0 30px',
+    },
+    inputStyle: {
+        width: '80%',
+        marginBottom: '10px',
+        margin: '25px'
 
-        this.onChangeSongTitle = this.onChangeSongTitle.bind(this);
-        this.onChangeArtist = this.onChangeArtist.bind(this);
-        this.onAddToFavoritesClicked = this.onAddToFavoritesClicked.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
 
-        this.state = {
-            songTitle: this.props.song.songTitle,
-            artist: this.props.song.artist,
-            lyrics: props.lyrics
-        }
+    },
+    formStyle: {
+        display:'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        width: '80%',
+        marginBottom: '10px',
+        margin: '25px',
+        position: 'relative'
+
     }
 
-    componentDidUpdate(prevProps) {
-        if (this.props.lyrics !== prevProps.lyrics) {
-          this.setState({lyrics:this.props.lyrics })
-        }
-      }
+});
 
-    onChangeSongTitle(e) {
-        this.setState({
-            songTitle: e.target.value
-        })
+export default function Lyrics(props) {
+
+    const classes = useStyles();
+
+    const [songTitle, setSongTitle] = useState(props.song.songTitle || '');
+    const [artist, setArtist] = useState(props.song.artist || '');
+    const [lyrics, setLyrics] = useState("");
+
+    useEffect(() => {
+        console.log('component updated!')
+        setLyrics(props.lyrics);
+    }, [props.lyrics]);
+
+    const onChangeSongTitle = (e) => {
+        setSongTitle(e.target.value);
+
     }
 
-    onChangeArtist(e) {
-        this.setState({
-            artist: e.target.value
-        })
+    const onChangeArtist = (e) => {
+        setArtist(e.target.value);
     }
 
-    onAddToFavoritesClicked() {
-       this.props.onAddToFavoritesClicked()
+    const onAddToFavoritesClicked = () => {
+        props.onAddToFavoritesClicked();
     }
 
-    onSubmit(e) {
-        e.preventDefault();
-        this.props.onSearchClicked(this.state.songTitle, this.state.artist);
+    const onSearchClicked = (e) => {
+        props.onSearchClicked(songTitle, artist);
     }
 
-    render() {
-        return (
-            <div>
-                <h3>Search For Lyrics</h3>
-                <form onSubmit={this.onSubmit}>
-                    <div className="form-group">
-                        <label>Song Title: </label>
-                        <input type="text"
+    const isSearchEnabled = songTitle.length > 0 && artist.length > 0;
+
+    return (
+        <div>
+                <div >
+                    <div className={classes.inputStyle}>
+                        <TextField
+                            label="Song"
+                            color="primary"
+                            variant="outlined"
+                            onChange={onChangeSongTitle}
                             required
-                            className="form-control"
-                            value={this.state.songTitle}
-                            onChange={this.onChangeSongTitle}
+                            value={songTitle}
+
                         />
                     </div>
-                    <div className="form-group">
-                        <label>Artist: </label>
-                        <input type="text"
+                    <div className={classes.inputStyle}>
+                        <TextField
+                            label="Artist"
+                            color="primary"
+                            variant="outlined"
+                            onChange={onChangeArtist}
                             required
-                            className="form-control"
-                            value={this.state.artist}
-                            onChange={this.onChangeArtist}
+                            value={artist}
                         />
                     </div>
-                    <div className="form-group">
-                        <input type="submit" value="search" className="btn btn-primary" />
+                    <div className={classes.inputStyle}>
+                        <Button
+                            variant="outlined"
+                            onClick={() => onSearchClicked()}
+                            disabled={!isSearchEnabled}
+                            className={classes.buttonStyle}
+                        >Search</Button>
                     </div>
-                    {this.state.lyrics &&
-                        <div className="form-group">
-                            <StarIcon onClick={() => this.onAddToFavoritesClicked()}></StarIcon>
-                        </div>
-                    }
-                </form>
+
+                </div>
 
                 <div>
-                    {this.state.lyrics &&
-                        <FontSizeChanger
-                            targets={['#target .content']}
-                            onChange={(element, newValue, oldValue) => {
-                                console.log(element, newValue, oldValue);
-                            }}
-                            options={{
-                                stepSize: 2,
-                                range: 3
-                            }}
-                            customButtons={{
-                                up: <span style={{ 'fontSize': '36px' }}>+</span>,
-                                down: <span style={{ 'fontSize': '20px' }}>-</span>,
-                                style: {
-                                    backgroundColor: 'red',
-                                    color: 'white',
-                                    WebkitBoxSizing: 'border-box',
-                                    WebkitBorderRadius: '5px',
-                                    width: '60px'
-                                },
-                                buttonsMargin: 10
-                            }}
-                        />
-                    }
-                    <div id="target">
-                        <p className="content">{this.state.lyrics} </p>
-
+                    <div className={classes.formStyle} >
+                        {lyrics &&
+                            <FontSizeChanger className={classes.inputStyle}
+                                targets={['#target .content']}
+                                onChange={(element, newValue, oldValue) => {
+                                    console.log(element, newValue, oldValue);
+                                }}
+                                options={{
+                                    stepSize: 2,
+                                    range: 3
+                                }}
+                                customButtons={{
+                                    up: <span style={{ 'fontSize': '36px' }}>+</span>,
+                                    down: <span style={{ 'fontSize': '20px' }}>-</span>,
+                                    style: {
+                                        backgroundColor: 'red',
+                                        color: 'white',
+                                        WebkitBoxSizing: 'border-box',
+                                        WebkitBorderRadius: '5px',
+                                        width: '60px'
+                                    },
+                                    buttonsMargin: 10
+                                }}
+                            />
+                        }
+                        {lyrics &&
+                            <div className={classes.inputStyle}>
+                                <FavoriteIcon onClick={() => onAddToFavoritesClicked()}></FavoriteIcon>
+                            </div>
+                        }
                     </div>
                 </div>
-            </div>
-        )
-    }
+                <div id="target">
+                    <p className="content">{lyrics}</p>
+                </div>
+        </div>
+    )
+
 }

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-//import { BrowserRouter, Link, Route, Switch, useHistory } from "react-router-dom";
 import axios from "axios";
 import Home from "./Home";
+import { TextField, Button, InputAdornment } from '@material-ui/core';
+import { AccountCircle, LockRounded } from '@material-ui/icons';
 
 
 function LogAndSign() {
@@ -24,6 +25,8 @@ function LogAndSign() {
             url: "http://localhost:4000/register",
         }).then((res) => {
             setData(res.data);
+            window.alert("Register Done");
+
         });
     };
 
@@ -44,6 +47,7 @@ function LogAndSign() {
                 }
                 else {
                     setLoggedIn(false);
+                    window.alert(res.data);
                 }
             });
     };
@@ -54,28 +58,51 @@ function LogAndSign() {
                 <div>
                     <div>
                         <h1>Register</h1>
-                        <input
-                            placeholder="username"
+                        <TextField
+                            label="Username"
+                            color="primary"
+                            variant="outlined"
                             onChange={(e) => setRegisterUsername(e.target.value)}
+                            required
+                            InputProps={{ startAdornment: <InputAdornment position="start"><AccountCircle /></InputAdornment> }}
                         />
-                        <input
-                            placeholder="password"
+                        <TextField
+                            type="password"
+                            label="Password"
+                            color="primary"
+                            variant="outlined"
                             onChange={(e) => setRegisterPassword(e.target.value)}
-                        />
-                        <button onClick={register}>Submit</button>
-                    </div>
+                            required
+                            InputProps={{ startAdornment: <InputAdornment position="start"><LockRounded /></InputAdornment> }}
 
+                        />
+                        <div>
+                            <Button onClick={register} variant="contained" color="primary" >Register</Button>
+                        </div>
+                    </div>
+                    <h1>Login</h1>
                     <div>
-                        <h1>Login</h1>
-                        <input
-                            placeholder="username"
+                        <TextField
+                            label="Username"
+                            color="primary"
+                            variant="outlined"
                             onChange={(e) => setLoginUsername(e.target.value)}
+                            required
+                            InputProps={{ startAdornment: <InputAdornment position="start"><AccountCircle /></InputAdornment> }}
                         />
-                        <input
-                            placeholder="password"
+                        <TextField
+                            type="password"
+                            label="Password"
+                            color="primary"
+                            variant="outlined"
                             onChange={(e) => setLoginPassword(e.target.value)}
+                            required
+                            InputProps={{ startAdornment: <InputAdornment position="start"><LockRounded /></InputAdornment> }}
+
                         />
-                        <button onClick={login}>Submit</button>
+                        <div>
+                            <Button onClick={login} variant="contained" color="primary" >Login</Button>
+                        </div>
                     </div>
                 </div>
                 : <Home user={data} />}
