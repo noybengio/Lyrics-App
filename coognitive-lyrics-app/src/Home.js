@@ -74,7 +74,6 @@ export class Home extends Component {
         };
 
         getLyrics(options).then((lyrics) => {
-            //console.log("lyrics: ",lyrics);
             if (!lyrics) {
                 window.alert("Lyrics Not Found");
             }

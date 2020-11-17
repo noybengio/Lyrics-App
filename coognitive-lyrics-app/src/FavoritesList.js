@@ -9,7 +9,6 @@ import ListItem from '@material-ui/core/ListItem';
 export class FavoritesList extends Component {
     constructor(props) {
         super(props);
-        console.log("in FavoritesList props.user: ", props.user);
         this.state = {
             favoritesList: this.props.user.favorites
         }
