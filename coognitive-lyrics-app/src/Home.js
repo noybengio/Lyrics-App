@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Tabs, Tab, AppBar,Typography  } from "@material-ui/core";
+import { Tabs, Tab, AppBar  } from "@material-ui/core";
 import Lyrics from './Lyrics'
 import FavoritesList from './FavoritesList'
 import axios from 'axios';
