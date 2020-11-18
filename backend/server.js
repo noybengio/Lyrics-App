@@ -9,6 +9,8 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const app = express();
 
+const PORT = process.env.PORT || 4000;
+
 const User = require('./user');
 //----------------------------------------- END OF IMPORTS---------------------------------------------------
 
@@ -100,6 +102,6 @@ app.get("/favorites", (req, res) => {
 
 
 //Start Server
-app.listen(4000, () => {
-    console.log("Server Has Started");
+app.listen(PORT, () => {
+    console.log("Server Has Started On Port " + PORT);
 });
