@@ -49,14 +49,14 @@ require("./passportConfig")(passport);
 
 //Routes
 
-app.post("/update", (req, res, next) => {
-    var myquery = {_id:req.body.id };
-    var newvalues = { $set: { favorites: req.body.favorites} };
-    User.updateOne(myquery,newvalues, function(err, res) {
+app.post("/update", (req, res) => {
+    var myquery = { _id: req.body.id };
+    var newvalues = { $set: { favorites: req.body.favorites } };
+    User.updateOne(myquery, newvalues, function (err, res) {
         if (err) throw err;
         console.log("1 document updated");
-      });
-    (req, res, next);
+    });
+    (req, res);
 });
 
 
@@ -75,31 +75,50 @@ app.post("/login", (req, res, next) => {
 });
 
 app.post("/register", (req, res) => {
-    User.findOne({ username: req.body.username }, async (err, doc) => {
-        if (err) throw err;
-        if (doc) res.send("User Already Exists");
-        if (!doc) {
-            const hashedPassword = await bcrypt.hash(req.body.password, 10);
-            const newUser = new User({
-                username: req.body.username,
-                password: hashedPassword,
-            });
-            await newUser.save();
-            res.send(newUser._id);
-        }
-    });
+    console.log("register req: ", req.body);
+
+    try {
+        User.findOne({ username: req.body.username }, async (err, doc) => {
+            if (doc) res.send("User Already Exists");
+            if (!doc) {
+                const hashedPassword = await bcrypt.hash(req.body.password, 10);
+                const newUser = new User({
+                    username: req.body.username,
+                    password: hashedPassword,
+                });
+                try {
+                    await newUser.save();
+                    res.send(newUser._id);
+                }
+                catch(eror){
+                    console.log("saving user in db failed",error);
+                    res.send(error);
+                }
+            }
+        });
+    }
+    catch (eror) {
+        console.log("register returned error: ", eror);
+        res.send(error);
+    }
+
+    // User.findOne({ username: req.body.username }, async (err, doc) => {
+    //     if (err) {
+    //         console.log("error at register find one: ",err);
+    //         throw err;
+    //     }
+    //     if (doc) res.send("User Already Exists");
+    //     if (!doc) {
+    //         const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    //         const newUser = new User({
+    //             username: req.body.username,
+    //             password: hashedPassword,
+    //         });
+    //         await newUser.save();
+    //         res.send(newUser._id);
+    //     }
+    // });
 });
-
-
-app.get("/user", (req, res) => {
-    res.send(req.user); // The req.user stores the entire user that has been authenticated inside of it.
-});
-
-app.get("/favorites", (req, res) => {
-    console.log("in server get favorites req: ", req.user);
-    res.send(req.user); // The req.user stores the entire user that has been authenticated inside of it.
-});
-
 
 //Start Server
 app.listen(PORT, () => {

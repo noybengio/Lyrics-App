@@ -24,10 +24,17 @@ function LogAndSign() {
             withCredentials: true,
             url: "http://localhost:4000/register",
         }).then((res) => {
-            setData(res.data);
-            window.alert("Register Done");
-
-        });
+            console.log(res.data);
+            if (res.data === 'User Already Exists') {
+                window.alert("User Already Exists");
+            }
+            else {
+                setData(res.data);
+                window.alert("Register Done");
+            }
+        }).catch((error) => {
+            window.alert("OPS REGISTER FAILED WITH ERROR: ",error);
+        })
     };
 
     function login() {
@@ -49,7 +56,7 @@ function LogAndSign() {
                     setLoggedIn(false);
                     window.alert(res.data);
                 }
-            });
+            }).catch(error =>window.alert("OPS LOGIN FAILED WITH ERROR: ",error));
     };
 
     return (
