@@ -29,9 +29,9 @@ export class Home extends Component {
     };
 
     onDeleteFavorite(index) {
-        var newFavorites = this.props.user.favorites;
+        let newFavorites = this.props.user.favorites;
         newFavorites.splice(index, 1);
-        var updatdUser = {
+        let updatdUser = {
             username: this.props.user.username,
             password: this.props.user.password,
             favorites: newFavorites,
@@ -86,9 +86,9 @@ export class Home extends Component {
             songTitle: this.state.songToDisplay.songTitle,
             artist: this.state.songToDisplay.artist,
         }
-        var newFavorites = this.props.user.favorites;
+        let newFavorites = this.props.user.favorites;
         newFavorites.push(favoriteSong);
-        var updatdUser = {
+        let updatdUser = {
             username: this.props.user.username,
             password: this.props.user.password,
             favorites: newFavorites,

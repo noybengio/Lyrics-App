@@ -50,36 +50,53 @@ require("./passportConfig")(passport);
 //Routes
 
 app.post("/update", (req, res) => {
-    var myquery = { _id: req.body.id };
-    var newvalues = { $set: { favorites: req.body.favorites } };
-    User.updateOne(myquery, newvalues, function (err, res) {
-        if (err) throw err;
-        console.log("1 document updated");
-    });
+    let myquery = { _id: req.body.id };
+    let newvalues = { $set: { favorites: req.body.favorites } };
+    console.log("starting update.....");
+    try {
+        User.updateOne(myquery, newvalues, function (err, res) {
+            console.log("1 document updated");
+        });
+    }
+    catch(error){
+        console.log("Error at update: ",error);
+        res.json("Error at update: ",error);
+    }
     (req, res);
 });
 
 
-app.post("/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
-        if (err) throw err;
-        if (!user) res.send("No User Exists");
+app.post("/login", (req, res) => {
+    console.log("login req: ", req.body);
+    console.log("tryng to login.....");
+    passport.authenticate("local", (err, user) => {
+        if (err) {
+            console.log("Error at passport.authenticate: ", err);
+            res.json("Error at passport.authenticate: ", err);
+            throw err;
+        }
+        if (!user) res.json("No User Exists");
         else {
             req.logIn(user, (err) => {
-                if (err) throw err;
-                res.send(req.user);
+                if (err) {
+                    console.log("Error at logIn: ", err);
+                    res.send("Error at logIn: ", err);
+                    throw err;
+                }
+                res.json(req.user);
             });
         }
     })
-        (req, res, next);
+        (req, res);
 });
 
 app.post("/register", (req, res) => {
     console.log("register req: ", req.body);
+    console.log("tryng to register.....");
 
     try {
         User.findOne({ username: req.body.username }, async (err, doc) => {
-            if (doc) res.send("User Already Exists");
+            if (doc) res.json("User Already Exists");
             if (!doc) {
                 const hashedPassword = await bcrypt.hash(req.body.password, 10);
                 const newUser = new User({
@@ -88,36 +105,19 @@ app.post("/register", (req, res) => {
                 });
                 try {
                     await newUser.save();
-                    res.send(newUser._id);
+                    res.json(newUser._id);
                 }
-                catch(eror){
-                    console.log("saving user in db failed",error);
-                    res.send(error);
+                catch (eror) {
+                    console.log("saving user in db failed", error);
+                    res.json(error);
                 }
             }
         });
     }
     catch (eror) {
         console.log("register returned error: ", eror);
-        res.send(error);
+        res.json(error);
     }
-
-    // User.findOne({ username: req.body.username }, async (err, doc) => {
-    //     if (err) {
-    //         console.log("error at register find one: ",err);
-    //         throw err;
-    //     }
-    //     if (doc) res.send("User Already Exists");
-    //     if (!doc) {
-    //         const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    //         const newUser = new User({
-    //             username: req.body.username,
-    //             password: hashedPassword,
-    //         });
-    //         await newUser.save();
-    //         res.send(newUser._id);
-    //     }
-    // });
 });
 
 //Start Server
