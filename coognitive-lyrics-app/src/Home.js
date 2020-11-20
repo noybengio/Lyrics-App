@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
-import { Tabs, Tab, AppBar  } from "@material-ui/core";
+import { Tabs, Tab, AppBar } from "@material-ui/core";
 import Lyrics from './Lyrics'
 import FavoritesList from './FavoritesList'
 import axios from 'axios';
-import { getLyrics } from 'genius-lyrics-api';
+
+const apiKey = 'b7325758b583496ae99042082d2421dc';
+const music = require('musicmatch')({ apikey: apiKey });
 
 export class Home extends Component {
 
@@ -49,36 +51,34 @@ export class Home extends Component {
 
     onFavoriteClicked(index) {
         const song = this.props.user.favorites[index];
-        this.setState({ songToDisplay: song });
-        const options = {
-            apiKey: 'DCCS9ls4wWU8rAylkXUtzBlRrCoA1dIlFF5yINiSp210dT7u-UoZmaOuQYPD-ZPt',
-            title: song.songTitle,
-            artist: song.artist,
-            optimizeQuery: true
-        };
-        this.setState({ selectedTab: 0 });
-        getLyrics(options).then((lyrics) => {
-            //console.log("lyrics: ", lyrics);
-            this.setState({ lyrics: lyrics })
-        });
+        this.setState({ songToDisplay: song, selectedTab: 0 });
+        music.matcherLyrics({ q_track: song.songTitle, q_artist: song.artist })
+            .then((data) => {
+                const lyrics = data.message.body.lyrics.lyrics_body;
+                console.log(lyrics);
+                this.setState({ lyrics: lyrics });
+            }).catch(function (err) {
+                window.alert("error in getting lyrics: ", err);
+            })
     }
 
     onSearchClicked(songTitle, artist) {
         const songToDisplay = { songTitle: songTitle, artist: artist };
         this.setState({ songToDisplay: songToDisplay });
-        const options = {
-            apiKey: 'DCCS9ls4wWU8rAylkXUtzBlRrCoA1dIlFF5yINiSp210dT7u-UoZmaOuQYPD-ZPt',
-            title: songTitle,
-            artist: artist,
-            optimizeQuery: true
-        };
+        console.log(songTitle, artist);
+        music.matcherLyrics({ q_track: songTitle, q_artist: artist })
+            .then((data) => {
+                const lyrics = data.message.body.lyrics.lyrics_body;
+                console.log(lyrics);
+                if (lyrics === null) {
+                    window.alert("Lyrics Not Found");
+                } else {
+                    this.setState({ lyrics: lyrics });
+                }
 
-        getLyrics(options).then((lyrics) => {
-            if (!lyrics) {
-                window.alert("Lyrics Not Found");
-            }
-            this.setState({ lyrics: lyrics })
-        });
+            }).catch(function (err) {
+                window.alert("error in getting lyrics: ", err);
+            })
     }
 
     onAddToFavoritesClicked() {

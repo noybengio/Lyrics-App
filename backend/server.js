@@ -26,13 +26,16 @@ mongoose.connect(
 );
 
 // Middleware
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(
     cors({
         origin: "http://localhost:3000", // <-- location of the react app were connecting to
         credentials: true,
     })
+    
 );
 app.use(
     session({
@@ -41,6 +44,7 @@ app.use(
         saveUninitialized: true,
     })
 );
+
 app.use(cookieParser("secretcode"));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -107,15 +111,15 @@ app.post("/register", (req, res) => {
                     await newUser.save();
                     res.json(newUser._id);
                 }
-                catch (eror) {
+                catch (error) {
                     console.log("saving user in db failed", error);
                     res.json(error);
                 }
             }
         });
     }
-    catch (eror) {
-        console.log("register returned error: ", eror);
+    catch (error) {
+        console.log("register returned error: ", error);
         res.json(error);
     }
 });
