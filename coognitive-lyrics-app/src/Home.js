@@ -4,10 +4,6 @@ import Lyrics from './Lyrics'
 import FavoritesList from './FavoritesList'
 import axios from 'axios';
 
-const apiKey = "b7325758b583496ae99042082d2421dc";
- 
-const music = require('musicmatch')({ apikey: apiKey });
-
 export default function Home(props) {
 
     const [selectedTab, setSelectedTab] = useState(props.selectedTab ? props.selectedTab : 0);
@@ -15,7 +11,6 @@ export default function Home(props) {
     const [lyrics, setLyrics] = useState("");
     const [user, setUser] = useState(props.user);
 
-    
     const handleChange = (event, newValue) => {
         setSelectedTab(newValue);
     };
@@ -36,37 +31,36 @@ export default function Home(props) {
                 console.log("lyrics update req: ", res.data)
             });
 
-            setUser(updatdUser);
+        setUser(updatdUser);
+    }
+
+    const fetchLyrics = (lyricsDetails) => {
+        axios.get('http://localhost:4000/lyrics', {
+            params: lyricsDetails
+        })
+            .then(res => {
+                if (Object.keys(res.data).length === 0) {
+                    setLyrics(null);
+                    window.alert("Lyrics Not Found");
+                } else {
+                    setLyrics(res.data);
+                }
+            }).catch(error => {
+                console.log("error ", error);
+            });
     }
 
     const onFavoriteClicked = (index) => {
-        const song = props.user.favorites[index];
-        setSongToDisplay(song);
         setSelectedTab(0);
-        music.matcherLyrics({ q_track: song.songTitle, q_artist: song.artist })
-            .then((data) => {
-                const lyrics = data.message.body.lyrics.lyrics_body;
-                setLyrics(lyrics);
-            }).catch(function (err) {
-                window.alert("error in getting lyrics: ", err);
-            })
+        const songToDisplay = props.user.favorites[index];
+        setSongToDisplay(songToDisplay);
+        fetchLyrics(songToDisplay);
     }
 
     const onSearchClicked = (songTitle, artist) => {
         const songToDisplay = { songTitle: songTitle, artist: artist };
         setSongToDisplay(songToDisplay);
-        music.matcherLyrics({ q_track: songTitle, q_artist: artist })
-            .then((data) => {
-                const lyrics = data.message.body.lyrics.lyrics_body;
-                if (lyrics === null) {
-                    window.alert("Lyrics Not Found");
-                } else {
-                    setLyrics(lyrics);
-                }
-
-            }).catch(function (err) {
-                window.alert("error in getting lyrics: ", err);
-            })
+        fetchLyrics(songToDisplay);
     }
 
     const onAddToFavoritesClicked = () => {
@@ -85,10 +79,13 @@ export default function Home(props) {
         // add to favorites in db
         axios.post('http://localhost:4000/update', updatdUser)
             .then(res => {
+                window.alert("Song Added To Favorites");
                 console.log("lyrics update req: ", res.data);
-            });
-        window.alert("Song Added To Favorites");
-    }
+            }).catch(error => {
+                console.log("lyrics update req: ", error);
+                window.alert("error adding song to favorites");
+            })
+}
 
     return (
         <>

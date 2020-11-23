@@ -8,7 +8,9 @@ const bcrypt = require("bcrypt");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const app = express();
+
 require('dotenv').config({ path: '../.env' }); //config method reads the .env file and saves the vars 
+const music = require('musicmatch')({ apikey: process.env.API_KEY });
 
 const PORT = process.env.SERVER_PORT || 4000;
 const User = require('./user');
@@ -30,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
     cors({
-        origin:process.env.HTTP + process.env.HOST + process.env.CLIENT_PORT, // <-- location of the react app were connecting to
+        origin: process.env.HTTP + process.env.HOST + process.env.CLIENT_PORT, // <-- location of the react app were connecting to
         credentials: true,
     })
 
@@ -120,6 +122,30 @@ app.post("/register", (req, res) => {
         console.log("register returned error: ", error);
         res.json(error);
     }
+});
+
+app.get("/lyrics", (req, res) => {
+    console.log("req: ", req.query);
+    const songToDisplay = req.query;
+    try {
+        music.matcherLyrics({ q_track: songToDisplay.songTitle, q_artist: songToDisplay.artist })
+            .then((data) => {
+                const lyrics = data.message.body.lyrics.lyrics_body;
+                console.log("lyrics",lyrics);
+                if (lyrics === null) {
+                    res.json(null);
+                } else {
+                    res.json(lyrics);
+                }
+            }).catch((err) => {
+                console.log("error",err);
+                res.json(err);
+            })
+    }
+    catch (error) {
+        console.log(error);
+    }
+    (req, res);
 });
 
 //Start Server
