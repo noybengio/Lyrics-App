@@ -8,22 +8,20 @@ const bcrypt = require("bcrypt");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const app = express();
+require('dotenv').config(); //config method reads the .env file and saves the vars 
 
-const PORT = process.env.PORT || 4000;
-
+const PORT = process.env.SERVER_PORT || 4000;
 const User = require('./user');
+
 //----------------------------------------- END OF IMPORTS---------------------------------------------------
 
-mongoose.connect(
-    "mongodb+srv://noyBengio:n7453573@cluster0.pk21n.mongodb.net/<dbname>?retryWrites=true&w=majority",
-    {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    },
-    () => {
-        console.log("Mongoose Is Connected");
-    }
-);
+//connect to local mongodb
+mongoose.connect(process.env.LOCAL_MONGO_URL);
+mongoose.connection.once('open', function () { //listen once to event open means once the connection is open
+    console.log("connection has been made to mongodb");
+}).on('error', function (error) { //always listen to error event
+    console.log("connection error: ", error);
+})
 
 // Middleware
 
@@ -32,10 +30,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
     cors({
-        origin: "http://localhost:3000", // <-- location of the react app were connecting to
+        origin:process.env.HTTP + process.env.HOST + process.env.CLIENT_PORT, // <-- location of the react app were connecting to
         credentials: true,
     })
-    
+
 );
 app.use(
     session({
@@ -62,9 +60,9 @@ app.post("/update", (req, res) => {
             console.log("1 document updated");
         });
     }
-    catch(error){
-        console.log("Error at update: ",error);
-        res.json("Error at update: ",error);
+    catch (error) {
+        console.log("Error at update: ", error);
+        res.json("Error at update: ", error);
     }
     (req, res);
 });
