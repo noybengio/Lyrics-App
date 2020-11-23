@@ -8,8 +8,9 @@ const bcrypt = require("bcrypt");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const app = express();
-require('dotenv').config(); //config method reads the .env file and saves the vars 
+require('dotenv').config({ path: '../.env' }); //config method reads the .env file and saves the vars 
 
+console.log(process.env);
 const PORT = process.env.SERVER_PORT || 4000;
 const User = require('./user');
 

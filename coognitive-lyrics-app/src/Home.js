@@ -1,43 +1,33 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import { Tabs, Tab, AppBar } from "@material-ui/core";
 import Lyrics from './Lyrics'
 import FavoritesList from './FavoritesList'
 import axios from 'axios';
 
-const apiKey = 'b7325758b583496ae99042082d2421dc';
+const apiKey = "b7325758b583496ae99042082d2421dc";
+ 
 const music = require('musicmatch')({ apikey: apiKey });
 
-export class Home extends Component {
+export default function Home(props) {
 
-    constructor(props) {
-        super(props);
+    const [selectedTab, setSelectedTab] = useState(props.selectedTab ? props.selectedTab : 0);
+    const [songToDisplay, setSongToDisplay] = useState('');
+    const [lyrics, setLyrics] = useState("");
+    const [user, setUser] = useState(props.user);
 
-        this.handleChange = this.handleChange.bind(this);
-        this.onFavoriteClicked = this.onFavoriteClicked.bind(this);
-        this.onDeleteFavorite = this.onDeleteFavorite.bind(this);
-        this.onAddToFavoritesClicked = this.onAddToFavoritesClicked.bind(this);
-        this.onSearchClicked = this.onSearchClicked.bind(this);
-
-        this.state = {
-            selectedTab: props.selectedTab ? props.selectedTab : 0,
-            lyrics: '',
-            songToDisplay: '',
-            user: props.user
-        }
-    }
-
-    handleChange(event, newValue) {
-        this.setState({ selectedTab: newValue })
+    
+    const handleChange = (event, newValue) => {
+        setSelectedTab(newValue);
     };
 
-    onDeleteFavorite(index) {
-        let newFavorites = this.props.user.favorites;
+    const onDeleteFavorite = (index) => {
+        let newFavorites = user.favorites;
         newFavorites.splice(index, 1);
         let updatdUser = {
-            username: this.props.user.username,
-            password: this.props.user.password,
+            username: user.username,
+            password: user.password,
             favorites: newFavorites,
-            id: this.props.user._id
+            id: user._id
         }
 
         //add to favorites in db
@@ -46,34 +36,32 @@ export class Home extends Component {
                 console.log("lyrics update req: ", res.data)
             });
 
-        this.setState({ user: updatdUser });
+            setUser(updatdUser);
     }
 
-    onFavoriteClicked(index) {
-        const song = this.props.user.favorites[index];
-        this.setState({ songToDisplay: song, selectedTab: 0 });
+    const onFavoriteClicked = (index) => {
+        const song = props.user.favorites[index];
+        setSongToDisplay(song);
+        setSelectedTab(0);
         music.matcherLyrics({ q_track: song.songTitle, q_artist: song.artist })
             .then((data) => {
                 const lyrics = data.message.body.lyrics.lyrics_body;
-                console.log(lyrics);
-                this.setState({ lyrics: lyrics });
+                setLyrics(lyrics);
             }).catch(function (err) {
                 window.alert("error in getting lyrics: ", err);
             })
     }
 
-    onSearchClicked(songTitle, artist) {
+    const onSearchClicked = (songTitle, artist) => {
         const songToDisplay = { songTitle: songTitle, artist: artist };
-        this.setState({ songToDisplay: songToDisplay });
-        console.log(songTitle, artist);
+        setSongToDisplay(songToDisplay);
         music.matcherLyrics({ q_track: songTitle, q_artist: artist })
             .then((data) => {
                 const lyrics = data.message.body.lyrics.lyrics_body;
-                console.log(lyrics);
                 if (lyrics === null) {
                     window.alert("Lyrics Not Found");
                 } else {
-                    this.setState({ lyrics: lyrics });
+                    setLyrics(lyrics);
                 }
 
             }).catch(function (err) {
@@ -81,18 +69,18 @@ export class Home extends Component {
             })
     }
 
-    onAddToFavoritesClicked() {
+    const onAddToFavoritesClicked = () => {
         const favoriteSong = {
-            songTitle: this.state.songToDisplay.songTitle,
-            artist: this.state.songToDisplay.artist,
+            songTitle: songToDisplay.songTitle,
+            artist: songToDisplay.artist,
         }
-        let newFavorites = this.props.user.favorites;
+        let newFavorites = props.user.favorites;
         newFavorites.push(favoriteSong);
         let updatdUser = {
-            username: this.props.user.username,
-            password: this.props.user.password,
+            username: props.user.username,
+            password: props.user.password,
             favorites: newFavorites,
-            id: this.props.user._id
+            id: props.user._id
         }
         // add to favorites in db
         axios.post('http://localhost:4000/update', updatdUser)
@@ -102,30 +90,28 @@ export class Home extends Component {
         window.alert("Song Added To Favorites");
     }
 
-    render() {
-        return (
-            <>
-                <AppBar position="static">
-                    <Tabs value={this.state.selectedTab} onChange={this.handleChange} selectionFollowsFocus >
-                        <Tab label="Lyrics" />
-                        <Tab label="Favorites" />
-                    </Tabs>
-                </AppBar>
+    return (
+        <>
+            <AppBar position="static">
+                <Tabs value={selectedTab} onChange={handleChange} selectionFollowsFocus >
+                    <Tab label="Lyrics" />
+                    <Tab label="Favorites" />
+                </Tabs>
+            </AppBar>
 
-                { this.state.selectedTab === 0 && <Lyrics lyrics={this.state.lyrics}
-                    user={this.props.user}
-                    song={this.state.songToDisplay}
-                    onAddToFavoritesClicked={this.onAddToFavoritesClicked}
-                    onSearchClicked={this.onSearchClicked}
-                />}
-                { this.state.selectedTab === 1 && <FavoritesList user={this.props.user}
-                    onFavoriteClicked={this.onFavoriteClicked}
-                    onDeleteFavorite={this.onDeleteFavorite}
-                />}
-            </>
+            { selectedTab === 0 && <Lyrics lyrics={lyrics}
+                user={props.user}
+                song={songToDisplay}
+                onAddToFavoritesClicked={onAddToFavoritesClicked}
+                onSearchClicked={onSearchClicked}
+            />}
+            { selectedTab === 1 && <FavoritesList user={props.user}
+                onFavoriteClicked={onFavoriteClicked}
+                onDeleteFavorite={onDeleteFavorite}
+            />}
+        </>
 
-        )
-    }
+    )
 }
 
-export default Home
+
