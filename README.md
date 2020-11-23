@@ -1,3 +1,11 @@
 # lyrics-app
-# to run the server: go to "backend" directory and run "nodemon server".
-# to run client: go to "coognitive-lyrics-app" directory and run "npm start"
+# to run the server: 
+1.cd './backend'
+2.npm install
+3.npm start
+
+# to run the client: 
+1.cd './coognitive-lyrics-app'
+2.npm install
+3.npm start
+
