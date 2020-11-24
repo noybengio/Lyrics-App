@@ -3,9 +3,20 @@ import axios from "axios";
 import Home from "./Home";
 import { TextField, Button, InputAdornment } from '@material-ui/core';
 import { AccountCircle, LockRounded } from '@material-ui/icons';
+import { makeStyles } from '@material-ui/core/styles';
 
+const useStyles = makeStyles(theme => ({
+    paper: {
+        marginTop: theme.spacing(8),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    }
+}));
 
 function LogAndSign() {
+
+    const classes = useStyles();
 
     const [registerUsername, setRegisterUsername] = useState("");
     const [registerPassword, setRegisterPassword] = useState("");
@@ -33,7 +44,7 @@ function LogAndSign() {
                 window.alert("Register Done");
             }
         }).catch((error) => {
-            window.alert("OPS REGISTER FAILED WITH ERROR: ",error);
+            window.alert("OPS REGISTER FAILED WITH ERROR: ", error);
         })
     };
 
@@ -56,13 +67,13 @@ function LogAndSign() {
                     setLoggedIn(false);
                     window.alert(res.data);
                 }
-            }).catch(error =>window.alert("OPS LOGIN FAILED WITH ERROR: ",error));
+            }).catch(error => window.alert("OPS LOGIN FAILED WITH ERROR: ", error));
     };
 
     return (
         <div className="App">
             {!isLoggedIn ?
-                <div>
+                <div className={classes.paper}>
                     <div>
                         <h1>Register</h1>
                         <TextField
@@ -87,8 +98,9 @@ function LogAndSign() {
                             <Button onClick={register} variant="contained" color="primary" >Register</Button>
                         </div>
                     </div>
-                    <h1>Login</h1>
                     <div>
+                        <h1>Login</h1>
+
                         <TextField
                             label="Username"
                             color="primary"

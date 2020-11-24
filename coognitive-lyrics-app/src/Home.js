@@ -63,29 +63,40 @@ export default function Home(props) {
         fetchLyrics(songToDisplay);
     }
 
+    const findSong = (favorites, newSong) => {
+        const found = favorites.find(element => element.songTitle === newSong.songTitle);
+        return found;
+    }
+
     const onAddToFavoritesClicked = () => {
         const favoriteSong = {
             songTitle: songToDisplay.songTitle,
             artist: songToDisplay.artist,
         }
         let newFavorites = props.user.favorites;
-        newFavorites.push(favoriteSong);
-        let updatdUser = {
-            username: props.user.username,
-            password: props.user.password,
-            favorites: newFavorites,
-            id: props.user._id
+        let foundSong = findSong(newFavorites, favoriteSong);
+        if (foundSong) {
+            window.alert("Song Already In Favorites");
         }
-        // add to favorites in db
-        axios.post('http://localhost:4000/update', updatdUser)
-            .then(res => {
-                window.alert("Song Added To Favorites");
-                console.log("lyrics update req: ", res.data);
-            }).catch(error => {
-                console.log("lyrics update req: ", error);
-                window.alert("error adding song to favorites");
-            })
-}
+        else {
+            newFavorites.push(favoriteSong);
+            let updatdUser = {
+                username: props.user.username,
+                password: props.user.password,
+                favorites: newFavorites,
+                id: props.user._id
+            }
+            // add to favorites in db
+            axios.post('http://localhost:4000/update', updatdUser)
+                .then(res => {
+                    window.alert(res.data);
+                    console.log("lyrics update req: ", res.data);
+                }).catch(error => {
+                    console.log("lyrics update req: ", error);
+                    alert("error adding song to favorites");
+                })
+        }
+    }
 
     return (
         <>

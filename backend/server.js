@@ -61,6 +61,7 @@ app.post("/update", (req, res) => {
         User.updateOne(myquery, newvalues, function (err, res) {
             console.log("1 document updated");
         });
+        res.json("Song Added To Favorites");
     }
     catch (error) {
         console.log("Error at update: ", error);
