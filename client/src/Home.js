@@ -3,6 +3,8 @@ import { Tabs, Tab, AppBar } from "@material-ui/core";
 import Lyrics from './Lyrics'
 import FavoritesList from './FavoritesList'
 import axios from 'axios';
+import Alert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 
 export default function Home(props) {
 
@@ -10,6 +12,9 @@ export default function Home(props) {
     const [songToDisplay, setSongToDisplay] = useState('');
     const [lyrics, setLyrics] = useState("");
     const [user, setUser] = useState(props.user);
+    const [status, setStatusBase] = useState(null);
+    const [open, setOpen] = useState(false);
+
 
     const handleChange = (event, newValue) => {
         setSelectedTab(newValue);
@@ -30,7 +35,6 @@ export default function Home(props) {
             .then(res => {
                 console.log("lyrics update req: ", res.data)
             });
-
         setUser(updatdUser);
     }
 
@@ -41,12 +45,15 @@ export default function Home(props) {
             .then(res => {
                 if (Object.keys(res.data).length === 0) {
                     setLyrics(null);
-                    window.alert("Lyrics Not Found");
+                    setStatusBase("Lyrics Not Found");
+                    setOpen(true);
                 } else {
                     setLyrics(res.data);
                 }
             }).catch(error => {
-                window.alert(error);
+                setStatusBase(error);
+                setOpen(true);
+
             });
     }
 
@@ -76,7 +83,9 @@ export default function Home(props) {
         let newFavorites = props.user.favorites;
         let foundSong = findSong(newFavorites, favoriteSong);
         if (foundSong) {
-            window.alert("Song Already In Favorites");
+            setStatusBase("Song Already In Favorites");
+            setOpen(true);
+
         }
         else {
             newFavorites.push(favoriteSong);
@@ -89,9 +98,11 @@ export default function Home(props) {
             // add to favorites in db
             axios.post('http://localhost:4000/update', updatdUser)
                 .then(res => {
-                    window.alert(res.data);
+                    setStatusBase("Song Added To Favorites");
+                    setOpen(true);
                 }).catch(error => {
-                    alert("error adding song to favorites");
+                    setStatusBase(error);
+                    setOpen(true);
                 })
         }
     }
@@ -105,16 +116,24 @@ export default function Home(props) {
                 </Tabs>
             </AppBar>
 
-            { selectedTab === 0 && <Lyrics lyrics={lyrics}
-                user={props.user}
-                song={songToDisplay}
-                onAddToFavoritesClicked={onAddToFavoritesClicked}
-                onSearchClicked={onSearchClicked}
-            />}
-            { selectedTab === 1 && <FavoritesList user={props.user}
-                onFavoriteClicked={onFavoriteClicked}
-                onDeleteFavorite={onDeleteFavorite}
-            />}
+            <Snackbar open={open} autoHideDuration={3000} onClose={() => setOpen(false)}>
+                <Alert color="info" variant="filled">{status}</Alert>
+            </Snackbar>
+
+            {
+                selectedTab === 0 && <Lyrics lyrics={lyrics}
+                    user={props.user}
+                    song={songToDisplay}
+                    onAddToFavoritesClicked={onAddToFavoritesClicked}
+                    onSearchClicked={onSearchClicked}
+                />
+            }
+            {
+                selectedTab === 1 && <FavoritesList user={props.user}
+                    onFavoriteClicked={onFavoriteClicked}
+                    onDeleteFavorite={onDeleteFavorite}
+                />
+            }
         </>
 
     )

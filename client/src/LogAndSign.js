@@ -3,7 +3,9 @@ import axios from "axios";
 import Home from "./Home";
 import { TextField, Button, InputAdornment } from '@material-ui/core';
 import { AccountCircle, LockRounded } from '@material-ui/icons';
+import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -24,6 +26,8 @@ function LogAndSign() {
     const [loginPassword, setLoginPassword] = useState("");
     const [data, setData] = useState(null);
     const [isLoggedIn, setLoggedIn] = useState(false);
+    const [status, setStatusBase] = useState('');
+    const [open, setOpen] = useState(false);
 
     const register = () => { //when it is called it sends the logic to backend
         axios({
@@ -36,18 +40,21 @@ function LogAndSign() {
             url: "http://localhost:4000/register",
         }).then((res) => {
             if (res.data === 'User Already Exists') {
-                window.alert("User Already Exists");
+                setStatusBase(res.data);
+                setOpen(true);
             }
             else {
                 setData(res.data);
-                window.alert("Register Done");
+                setStatusBase("Register Done");
+                setOpen(true);
             }
         }).catch((error) => {
-            window.alert("OPS REGISTER FAILED WITH ERROR: ", error);
+            setStatusBase(error);
+            setOpen(true);
         })
     };
 
-    function login() {
+    const login = () => {
         axios({
             method: "POST",
             data: {
@@ -61,18 +68,26 @@ function LogAndSign() {
                 setData(res.data);
                 if (res.data._id) {
                     setLoggedIn(true);
+                    //no need to update status for alert because rendering Home page
                 }
                 else {
                     setLoggedIn(false);
-                    window.alert(res.data);
+                    setStatusBase("User Not Found");
+                    setOpen(true);
                 }
-            }).catch(error => window.alert("OPS LOGIN FAILED WITH ERROR: ", error));
+            }).catch(error => {
+                setStatusBase(error)
+                setOpen(true);
+            });
     };
 
     return (
         <div className="App">
             {!isLoggedIn ?
                 <div className={classes.paper}>
+                    <Snackbar open={open} autoHideDuration={3000} onClose={() => setOpen(false)}>
+                        <Alert color="info" variant="filled">{status}</Alert>
+                    </Snackbar>
                     <div>
                         <h1>Register</h1>
                         <TextField

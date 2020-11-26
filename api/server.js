@@ -146,14 +146,15 @@ app.get("/lyrics", (req, res) => {
     console.log("req: ", req.query);
     const songToDisplay = req.query;
     try {
+        //use musixmatch lyrics api to get lurics
         music.matcherLyrics({ q_track: songToDisplay.songTitle, q_artist: songToDisplay.artist })
             .then((data) => {
-                const lyrics = data.message.body.lyrics.lyrics_body;
+                const lyrics = data.message.body.lyrics;
                 console.log("lyrics", lyrics);
-                if (lyrics === null) {
+                if (lyrics.lyrics_body === null) {
                     res.json(null);
                 } else {
-                    res.json(lyrics);
+                    res.json(lyrics.lyrics_body);
                 }
             }).catch((err) => {
                 console.log("error", err);
