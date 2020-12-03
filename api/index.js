@@ -11,6 +11,7 @@ const app = express();
 require('dotenv').config(); //config method reads the .env file and saves the vars 
 const { API_KEY, SERVER_PORT, LOCAL_MONGO_URL, CLIENT_PORT, PROTOCOL } = process.env;
 const music = require('musicmatch')({ apikey: API_KEY });
+const path = require('path');
 
 const PORT = SERVER_PORT || 4000;
 const User = require('./user');
@@ -26,6 +27,8 @@ mongoose.connection.once('open', function () { //listen once to event open means
 })
 
 // Middleware
+app.use(express.static(path.join(__dirname, 'build')));
+//Express will know which files to serve
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -52,6 +55,14 @@ require("./passportConfig")(passport);
 //----------------------------------------- END OF MIDDLEWARE---------------------------------------------------
 
 //Routes
+
+app.get('./', (req, res) => {
+    try {
+        res.sendFile(path.join(__dirname, 'build', 'index.html'));
+    } catch (error) {
+        console.log("Error at update: ", error);
+    }
+});
 
 app.post("/update", (req, res) => {
     let myquery = { _id: req.body.id };
@@ -104,7 +115,7 @@ app.post("/login", (req, res) => {
             });
         }
     })
-    (req, res); //cannot remove this line 
+        (req, res); //cannot remove this line 
 });
 
 app.post("/register", (req, res) => {
@@ -133,7 +144,7 @@ app.post("/register", (req, res) => {
                 }
                 catch (error) {
                     console.log("saving user in db failed", error);
-                    res.status(500).json({ success: false,data:error})
+                    res.status(500).json({ success: false, data: error })
                     res.json(error);
                 }
             }
