@@ -1,0 +1,19 @@
+{
+  "name": "package",
+  "version": "1.0.0",
+  "description": "1.cd './api'\r 2.npm install\r 3.npm start",
+  "main": "api/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noybengio/lyrics-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/noybengio/lyrics-app/issues"
+  },
+  "homepage": "https://github.com/noybengio/lyrics-app#readme"
+}
