@@ -13,7 +13,7 @@ export default function Home(props) {
     const [lyrics, setLyrics] = useState("");
     const [user, setUser] = useState(props.user);
     const [status, setStatusBase] = useState(null);
-    const [open, setOpen] = useState(false);
+    const [openSnackBar, setOpenSnackBar] = useState(false);
 
 
     const handleChange = (event, newValue) => {
@@ -46,13 +46,13 @@ export default function Home(props) {
                 if (Object.keys(res.data).length === 0) {
                     setLyrics(null);
                     setStatusBase("Lyrics Not Found");
-                    setOpen(true);
+                    setOpenSnackBar(true);
                 } else {
                     setLyrics(res.data);
                 }
             }).catch(error => {
                 setStatusBase(error);
-                setOpen(true);
+                setOpenSnackBar(true);
 
             });
     }
@@ -84,7 +84,7 @@ export default function Home(props) {
         let foundSong = findSong(newFavorites, favoriteSong);
         if (foundSong) {
             setStatusBase("Song Already In Favorites");
-            setOpen(true);
+            setOpenSnackBar(true);
 
         }
         else {
@@ -99,10 +99,10 @@ export default function Home(props) {
             axios.post('http://localhost:4000/update', updatdUser)
                 .then(res => {
                     setStatusBase("Song Added To Favorites");
-                    setOpen(true);
+                    setOpenSnackBar(true);
                 }).catch(error => {
                     setStatusBase(error);
-                    setOpen(true);
+                    setOpenSnackBar(true);
                 })
         }
     }
@@ -116,7 +116,7 @@ export default function Home(props) {
                 </Tabs>
             </AppBar>
 
-            <Snackbar open={open} autoHideDuration={3000} onClose={() => setOpen(false)}>
+            <Snackbar open={openSnackBar} autoHideDuration={3000} onClose={() => setOpenSnackBar(false)}>
                 <Alert color="info" variant="filled">{status}</Alert>
             </Snackbar>
 

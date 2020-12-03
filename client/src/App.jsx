@@ -1,4 +1,4 @@
-import LogAndSign from './LogAndSign';
+import LogAndSign from './components/LogAndSign';
 import ParticlesBg from 'particles-bg'
 
 function App() {

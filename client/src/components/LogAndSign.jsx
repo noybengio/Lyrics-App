@@ -27,7 +27,7 @@ function LogAndSign() {
     const [data, setData] = useState(null);
     const [isLoggedIn, setLoggedIn] = useState(false);
     const [status, setStatusBase] = useState('');
-    const [open, setOpen] = useState(false);
+    const [openSnackBar, setOpenSnackBar] = useState(false);
 
     const register = () => { //when it is called it sends the logic to backend
         axios({
@@ -41,16 +41,16 @@ function LogAndSign() {
         }).then((res) => {
             if (res.data === 'User Already Exists') {
                 setStatusBase(res.data);
-                setOpen(true);
+                setOpenSnackBar(true);
             }
             else {
                 setData(res.data);
                 setStatusBase("Register Done");
-                setOpen(true);
+                setOpenSnackBar(true);
             }
         }).catch((error) => {
             setStatusBase(error);
-            setOpen(true);
+            setOpenSnackBar(true);
         })
     };
 
@@ -73,19 +73,26 @@ function LogAndSign() {
                 else {
                     setLoggedIn(false);
                     setStatusBase("User Not Found");
-                    setOpen(true);
+                    setOpenSnackBar(true);
                 }
             }).catch(error => {
                 setStatusBase(error)
-                setOpen(true);
+                setOpenSnackBar(true);
             });
     };
 
-    return (
-        <div className="App">
-            {!isLoggedIn ?
+    if (isLoggedIn) {
+        return (
+            <div className="App">
+                <Home user={data} />
+            </div>
+        )
+    }
+    else {
+        return (
+            <div className="App">
                 <div className={classes.paper}>
-                    <Snackbar open={open} autoHideDuration={3000} onClose={() => setOpen(false)}>
+                    <Snackbar open={openSnackBar} autoHideDuration={3000} onClose={() => setOpenSnackBar(false)}>
                         <Alert color="info" variant="filled">{status}</Alert>
                     </Snackbar>
                     <div>
@@ -138,9 +145,10 @@ function LogAndSign() {
                         </div>
                     </div>
                 </div>
-                : <Home user={data} />}
-        </div>
-    )
+            </div>
+
+        )
+    }
 }
 
 export default LogAndSign

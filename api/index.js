@@ -89,6 +89,7 @@ app.post("/login", (req, res) => {
             res.json("No User Exists");
         }
         else {
+            console.log("before req.logIn ");
             req.logIn(user, (err) => {
                 if (err) {
                     console.log("Error at logIn: ", err);
@@ -103,7 +104,7 @@ app.post("/login", (req, res) => {
             });
         }
     })
-        (req, res);
+    (req, res); //cannot remove this line 
 });
 
 app.post("/register", (req, res) => {
@@ -126,11 +127,13 @@ app.post("/register", (req, res) => {
                 console.log("trying to save user in db");
                 try {
                     await newUser.save();
-                    res.json(newUser._id);
+                    //res.json(newUser._id);
                     console.log("user added to db!");
+                    res.json({ success: true, data: newUser._id })
                 }
                 catch (error) {
                     console.log("saving user in db failed", error);
+                    res.status(500).json({ success: false,data:error})
                     res.json(error);
                 }
             }
