@@ -4,7 +4,8 @@
   "description": "1.cd './api'\r 2.npm install\r 3.npm start",
   "main": "api/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cd api && npm start"
   },
   "repository": {
     "type": "git",

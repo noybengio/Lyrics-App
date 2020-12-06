@@ -11,6 +11,7 @@
     "@testing-library/react": "^11.1.2",
     "@testing-library/user-event": "^12.2.2",
     "axios": "^0.21.0",
+    "http-proxy-middleware": "^1.0.6",
     "musicmatch": "^0.3.2",
     "musixmatch-node": "^1.0.2",
     "particles-bg": "^2.5.0",
@@ -31,6 +32,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "http://localhost:4000",
   "eslintConfig": {
     "extends": [
       "react-app",
