@@ -24,7 +24,9 @@
     "react-scroll": "^1.8.1",
     "react-to-target-auto-scroll": "^1.0.5",
     "rn-placeholder": "^3.0.3",
-    "web-vitals": "^0.2.4"
+    "web-vitals": "^0.2.4",
+    "@babel/plugin-syntax-class-properties": "^7.12.1"
+
   },
   "proxy":"http://localhost:4000",
   "scripts": {
@@ -52,7 +54,6 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-syntax-class-properties": "^7.12.1",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0"
   }
