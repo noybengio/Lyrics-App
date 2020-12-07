@@ -12,6 +12,7 @@ require('dotenv').config(); //config method reads the .env file and saves the va
 const { API_KEY, SERVER_PORT, LOCAL_MONGO_URL, CLIENT_PORT, PROTOCOL } = process.env;
 const music = require('musicmatch')({ apikey: API_KEY });
 const path = require('path');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const PORT = SERVER_PORT || 4000;
 const User = require('./user');
@@ -34,9 +35,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 //app.use(cors());
 
+// app.use(
+//     cors({
+//         origin: `${PROTOCOL}://localhost:${CLIENT_PORT}`, // <-- location of the react app were connecting to
+//         credentials: true,
+//     })
+
+// );
 app.use(
     cors({
-        origin: `${PROTOCOL}://localhost:${CLIENT_PORT}`, // <-- location of the react app were connecting to
+        origin: `${PROTOCOL}://bengio-lyrics-app.herokuapp.com`, // <-- location of the react app were connecting to
         credentials: true,
     })
 
