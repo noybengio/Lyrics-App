@@ -27,7 +27,7 @@ mongoose.connection.once('open', function () { //listen once to event open means
 })
 
 // Middleware
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, '/build')));
 //Express will know which files to serve
 
 app.use(bodyParser.json());
@@ -57,9 +57,9 @@ require("./passportConfig")(passport);
 
 //Routes
 
-app.get('./', (req, res) => {
+app.get('/', (req, res) => {
     try {
-        res.sendFile(path.join(__dirname, 'build', 'index.html'));
+        res.sendFile(path.join(__dirname, '/build', 'index.html'));
     } catch (error) {
         console.log("Error at update: ", error);
     }
