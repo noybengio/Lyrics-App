@@ -31,7 +31,7 @@ export default function Home(props) {
         }
 
         //add to favorites in db
-        axios.post('http://localhost:4000/update', updatdUser)
+        axios.post('/update', updatdUser)
             .then(res => {
                 console.log("lyrics update req: ", res.data)
             });
@@ -39,7 +39,7 @@ export default function Home(props) {
     }
 
     const fetchLyrics = (lyricsDetails) => {
-        axios.get('http://localhost:4000/lyrics', {
+        axios.get('/lyrics', {
             params: lyricsDetails
         })
             .then(res => {
@@ -96,7 +96,7 @@ export default function Home(props) {
                 id: props.user._id
             }
             // add to favorites in db
-            axios.post('http://localhost:4000/update', updatdUser)
+            axios.post('/update', updatdUser)
                 .then(res => {
                     setStatusBase("Song Added To Favorites");
                     setOpenSnackBar(true);

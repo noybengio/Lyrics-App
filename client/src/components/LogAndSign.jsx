@@ -37,7 +37,7 @@ function LogAndSign() {
                 password: registerPassword,
             },
             withCredentials: true,
-            url: "http://localhost:4000/register",
+            url: "/register",
         }).then((res) => {
             if (res.data === 'User Already Exists') {
                 setStatusBase(res.data);
@@ -62,7 +62,7 @@ function LogAndSign() {
                 password: loginPassword,
             },
             withCredentials: true,
-            url: "http://localhost:4000/login",
+            url: "/login",
         })
             .then((res) => {
                 setData(res.data);
