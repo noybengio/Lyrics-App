@@ -12,7 +12,6 @@ require('dotenv').config(); //config method reads the .env file and saves the va
 const { API_KEY, SERVER_PORT, LOCAL_MONGO_URL, CLIENT_PORT, PROTOCOL } = process.env;
 const music = require('musicmatch')({ apikey: API_KEY });
 const path = require('path');
-const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const PORT = SERVER_PORT || 4000;
 const User = require('./user');
@@ -28,27 +27,25 @@ mongoose.connection.once('open', function () { //listen once to event open means
 })
 
 // Middleware
-app.use(express.static(path.join(__dirname, '/build')));
-//Express will know which files to serve
+const whitelist = ['http://localhost:3000', 'http://localhost:4000', 'https://bengio-lyrics-app.herokuapp.com/']
+const corsOptions = {
+  origin: function (origin, callback) {
+    console.log("** Origin of request " + origin)
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      console.log("Origin acceptable")
+      callback(null, true)
+    } else {
+      console.log("Origin rejected")
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-//app.use(cors());
 
-// app.use(
-//     cors({
-//         origin: `${PROTOCOL}://localhost:${CLIENT_PORT}`, // <-- location of the react app were connecting to
-//         credentials: true,
-//     })
+app.use(cord(corsOptions));
 
-// );
-app.use(
-    cors({
-        origin: `${PROTOCOL}://bengio-lyrics-app.herokuapp.com`, // <-- location of the react app were connecting to
-        credentials: true,
-    })
-
-);
 app.use(
     session({
         secret: "secretcode",
@@ -65,13 +62,23 @@ require("./passportConfig")(passport);
 
 //Routes
 
-app.get('/', (req, res) => {
-    try {
-        res.sendFile(path.join(__dirname, '/build', 'index.html'));
-    } catch (error) {
-        console.log("Error at update: ", error);
-    }
-});
+if (process.env.NODE_ENV === 'production') {
+    // Serve any static files
+    app.use(express.static(path.join(__dirname, '../client/build')));
+  // Handle React routing, return all requests to React app
+    app.get('*', function(req, res) {
+      res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+    });
+  }
+  
+
+// app.get('/', (req, res) => {
+//     try {
+//         res.sendFile(path.join(__dirname, '/build', 'index.html'));
+//     } catch (error) {
+//         console.log("Error at update: ", error);
+//     }
+// });
 
 app.post("/update", (req, res) => {
     let myquery = { _id: req.body.id };
