@@ -4,7 +4,8 @@
   "description": "1.cd './api'\r 2.npm install\r 3.npm start",
   "main": "api/index.js",
   "engines": {
-    "node": "14.8.0"
+    "node": "14.8.0",
+    "npm":"6.14.7"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
