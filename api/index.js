@@ -13,7 +13,7 @@ const { API_KEY, SERVER_PORT, LOCAL_MONGO_URL, CLIENT_PORT, PROTOCOL } = process
 const music = require('musicmatch')({ apikey: API_KEY });
 const path = require('path');
 
-//const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4000;
 const User = require('./user');
 
 //----------------------------------------- END OF IMPORTS---------------------------------------------------
@@ -200,6 +200,6 @@ app.get('/', function (req, res) {
 });
 
 //Start Server
-app.listen(process.env.PORT || 4000, () => {
-    console.log("Server Has Started On Port ");
+app.listen(PORT,"0.0.0.0", () => {
+    console.log("Server Has Started On Port " + PORT);
 });
