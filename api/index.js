@@ -13,7 +13,7 @@ const { API_KEY, SERVER_PORT, LOCAL_MONGO_URL, CLIENT_PORT, PROTOCOL } = process
 const music = require('musicmatch')({ apikey: API_KEY });
 const path = require('path');
 
-const PORT = SERVER_PORT || 4000;
+const PORT = process.env.PORT || 4000;
 const User = require('./user');
 
 //----------------------------------------- END OF IMPORTS---------------------------------------------------
@@ -195,7 +195,7 @@ app.get("/lyrics", (req, res) => {
     (req, res);
 });
 
-app.get('*', function (req, res) {
+app.get('/', function (req, res) {
     res.sendFile(path.resolve(__dirname + '../client/build/index.html'));
 });
 
