@@ -19,5 +19,6 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/noybengio/lyrics-app/issues"
-  }
+  },
+  "homepage": "https://bengio-lyrics-app.herokuapp.com"
 }
