@@ -13,8 +13,6 @@
     "axios": "^0.21.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "http-proxy-middleware": "^1.0.6",
-    "musicmatch": "^0.3.2",
-    "musixmatch-node": "^1.0.2",
     "particles-bg": "^2.5.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
